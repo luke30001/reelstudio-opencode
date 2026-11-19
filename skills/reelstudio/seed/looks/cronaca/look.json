@@ -1,0 +1,13 @@
+{
+  "name": "Cronaca",
+  "description": "Archival documentary: newsprint paper, black serif headlines, one deep red accent, real black-and-white photos as framed prints, film grain. For history, economy and true stories.",
+  "colors": {"bg1": "#F3EDE2", "bg2": "#E8DFD0", "accent": "#B3261E", "text": "#141414", "muted": "#6E655A", "card": "#FFFDF8"},
+  "font": {"family": "Inter", "weights": [500, 600, 700, 800]},
+  "display": {"family": "Playfair Display", "weights": [600, 700, 800], "fallback": "Georgia, serif"},
+  "captions": "pill",
+  "background": "editorial",
+  "imageStyle": "Archival documentary look: black and white or muted sepia, period-accurate details, film grain, natural light, no text, no letters, no logos.",
+  "references": [],
+  "motion": "camera",
+  "bible": "Real history first: use real photos from `rs photo` (graded bw or sepia, always with Credit) laid out as framed prints in one big paper world, the camera travelling from print to print and zooming into details. AI images only for what no photo can show, in the same archival grade. Serif Headline, red pill, numbers in StatCard/Badge/ChartCard with a Source. Add <Grain /> on top. No emoji, no mascot."
+}

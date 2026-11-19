@@ -1,0 +1,9 @@
+{
+  "name": "Storia",
+  "handle": "@tuohandle",
+  "language": "it",
+  "look": "cronaca",
+  "tone": "Narrazione da documentario: tesa, precisa, coinvolgente. Fatti verificati, date e numeri esatti, frasi brevi.",
+  "voice": {"instructions": "Leggi in italiano con il tono di un documentario storico: voce profonda e seria, ritmo deciso e scorrevole, enfasi sui numeri senza fermarti."},
+  "sayVoice": "Luca"
+}

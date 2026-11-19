@@ -1,0 +1,111 @@
+#!/bin/sh
+# shellcheck disable=SC2088  # "~/..." in messages is meant literally
+# ReelStudio CLI launcher for OpenCode.
+#   reelstudio setup     install/refresh the engine in ~/ReelStudio from this skill
+#   reelstudio update    pull the latest ReelStudio from GitHub and reinstall
+#   reelstudio doctor    check Node, ffmpeg, OpenCode, skill, engine and key
+#   reelstudio key       set the OpenRouter key (hidden prompt, saved in ~/ReelStudio/.env, chmod 600)
+#   reelstudio version   installed versions
+# Every other command runs the engine in ~/ReelStudio (reelstudio help lists them).
+HOME_RS="${REELSTUDIO_HOME:-$HOME/ReelStudio}"
+SKILL_DIR="@SKILL_DIR@"
+REPO_DIR="@REPO_DIR@"
+
+skill_version() { [ -f "$SKILL_DIR/VERSION" ] && tr -d '[:space:]' < "$SKILL_DIR/VERSION"; }
+engine_version() { [ -f "$HOME_RS/engine/.reelstudio-version" ] && tr -d '[:space:]' < "$HOME_RS/engine/.reelstudio-version"; }
+
+run_setup() {
+  if [ ! -f "$SKILL_DIR/engine/bin/rs.mjs" ]; then
+    echo "✗ ReelStudio skill not found in $SKILL_DIR: run install.sh from the repository"; exit 1
+  fi
+  node "$SKILL_DIR/engine/bin/rs.mjs" setup || exit 1
+  v=$(skill_version)
+  mkdir -p "$HOME_RS/engine"
+  [ -n "$v" ] && printf '%s\n' "$v" > "$HOME_RS/engine/.reelstudio-version"
+}
+
+case "$1" in
+key)
+  if [ ! -t 0 ]; then
+    echo "✗ Run this yourself in a Terminal window: reelstudio key   (it asks for the key without showing it)"; exit 1
+  fi
+  ENV="$HOME_RS/.env"
+  mkdir -p "$HOME_RS"
+  stty -echo; trap 'stty echo' EXIT INT TERM
+  printf 'OpenRouter API key (https://openrouter.ai/keys), hidden while you paste: '
+  IFS= read -r KEY; stty echo; printf '\n'
+  KEY=$(printf '%s' "$KEY" | tr -d '[:space:]')
+  case "$KEY" in sk-or-*) ;; *) echo "✗ That does not look like an OpenRouter key (it starts with sk-or-). Nothing saved."; exit 1;; esac
+  touch "$ENV"; chmod 600 "$ENV"
+  grep -v '^[[:space:]]*#\{0,1\}[[:space:]]*OPENROUTER_API_KEY=' "$ENV" > "$ENV.tmp" 2>/dev/null || true
+  printf 'OPENROUTER_API_KEY=%s\n' "$KEY" >> "$ENV.tmp"
+  mv "$ENV.tmp" "$ENV"; chmod 600 "$ENV"
+  echo "✓ Key saved in $ENV (only your user can read it)"
+  exit 0;;
+
+setup)
+  run_setup; exit 0;;
+
+update)
+  before=$(skill_version)
+  if [ ! -d "$REPO_DIR/.git" ]; then
+    echo "✗ ReelStudio was installed from a copy without git ($REPO_DIR)."
+    echo "  Re-run the installer from a fresh clone: git clone https://github.com/luke30001/reelstudio-opencode.git"
+    exit 1
+  fi
+  git -C "$REPO_DIR" pull --ff-only || { echo "✗ could not update the repository (offline or local changes?)"; exit 1; }
+  "$REPO_DIR/install.sh" --quiet || exit 1
+  after=$(skill_version)
+  if [ "$before" = "$after" ]; then echo "✓ ReelStudio is up to date ($after)"; else echo "✓ ReelStudio updated: ${before:-none} → $after"; fi
+  exit 0;;
+
+version|--version|-v)
+  echo "skill   $(skill_version || echo 'not installed')"
+  echo "engine  $(engine_version || echo 'not set up')  ($HOME_RS/engine)"
+  exit 0;;
+
+doctor)
+  bad=0
+  ok() { printf '  ✓ %s\n' "$1"; }
+  no() { printf '  ✗ %s\n' "$1"; bad=$((bad+1)); }
+  meh() { printf '  ! %s\n' "$1"; }
+  echo "ReelStudio doctor"
+  if command -v node >/dev/null 2>&1; then
+    nv=$(node -p 'process.versions.node' 2>/dev/null); nm=${nv%%.*}
+    [ "${nm:-0}" -ge 20 ] 2>/dev/null && ok "Node.js $nv" || no "Node.js $nv is too old: need 20+ (brew upgrade node)"
+  else no "Node.js missing (brew install node)"; fi
+  command -v ffmpeg >/dev/null 2>&1 && ok "ffmpeg" || no "ffmpeg missing (brew install ffmpeg)"
+  if command -v opencode >/dev/null 2>&1; then ok "OpenCode CLI $(opencode --version 2>/dev/null | tail -1)"
+  elif [ -x "$HOME/.local/bin/opencode" ]; then ok "OpenCode CLI $("$HOME/.local/bin/opencode" --version 2>/dev/null | tail -1) (not on PATH)"
+  else no "OpenCode CLI missing: https://opencode.ai/docs/"; fi
+  if [ -f "$SKILL_DIR/SKILL.md" ] && [ -f "$SKILL_DIR/engine/bin/rs.mjs" ]; then ok "skill reelstudio $(skill_version) in $SKILL_DIR"
+  else no "skill not installed in $SKILL_DIR: run install.sh"; fi
+  if [ -f "$HOME_RS/engine/bin/rs.mjs" ] && [ -d "$HOME_RS/engine/node_modules/remotion" ]; then
+    ev=$(engine_version)
+    if [ -n "$ev" ] && [ "$ev" != "$(skill_version)" ]; then meh "engine is $ev but skill is $(skill_version): run  reelstudio setup"
+    else ok "engine and Remotion in $HOME_RS/engine"; fi
+  else no "engine not set up: run  reelstudio setup"; fi
+  if [ -f "$HOME_RS/.env" ] && grep -q '^OPENROUTER_API_KEY=sk-or-' "$HOME_RS/.env" 2>/dev/null; then
+    perm=$(stat -f '%Lp' "$HOME_RS/.env" 2>/dev/null || stat -c '%a' "$HOME_RS/.env" 2>/dev/null)
+    [ "$perm" = "600" ] && ok "OpenRouter key set (file readable only by you)" || meh "OpenRouter key set, but $HOME_RS/.env is $perm: run  chmod 600 $HOME_RS/.env"
+    if command -v curl >/dev/null 2>&1; then
+      code=$( (printf 'header = "Authorization: Bearer '; sed -n 's/^OPENROUTER_API_KEY=//p' "$HOME_RS/.env" | head -1 | tr -d '\r\n'; printf '"\n') \
+        | curl -s -o /dev/null -w '%{http_code}' -m 10 -K - https://openrouter.ai/api/v1/key)
+      case "$code" in 200) ok "OpenRouter accepts the key";; 401|403) no "OpenRouter rejects the key: run  reelstudio key";; *) meh "could not reach OpenRouter (HTTP $code)";; esac
+    fi
+  else meh "no OpenRouter key: voice and images are off (run  reelstudio key)"; fi
+  case ":$PATH:" in *":$HOME/.local/bin:"*) ok "~/.local/bin is on PATH";; *) meh "~/.local/bin is not on PATH: add  export PATH=\"\$HOME/.local/bin:\$PATH\"  to ~/.zshrc";; esac
+  [ "$bad" -eq 0 ] && echo "All good." || echo "$bad problem(s) to fix."
+  exit "$bad";;
+esac
+
+if [ ! -f "$HOME_RS/engine/bin/rs.mjs" ]; then run_setup; fi
+if [ "$1" = "help" ] || [ -z "$1" ]; then
+  node "$HOME_RS/engine/bin/rs.mjs"
+  echo "  update                         get the latest ReelStudio from GitHub and refresh the engine
+  doctor                         check Node, ffmpeg, OpenCode, skill, engine and key
+  key                            set the OpenRouter key (hidden prompt)
+  version                        installed versions"
+  exit 0
+fi
+exec node "$HOME_RS/engine/bin/rs.mjs" "$@"

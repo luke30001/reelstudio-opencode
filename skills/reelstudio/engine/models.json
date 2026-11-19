@@ -1,0 +1,58 @@
+{
+  "_why": "Picks reviewed 2026-11-18 (OpenRouter catalog + design arena + listening tests in Italian). Run `rs models` to re-check the live catalog. Override any key in ~/ReelStudio/config.json.",
+  "tts": {
+    "model": "google/gemini-3.8-flash-tts",
+    "_why": "Text-to-speech arena #1 (Elo 1475). Native-sounding Italian with natural pacing, follows `voice.instructions` for tone. Returns PCM; rs converts it to mp3. ~$16 / 1M chars.",
+    "voices": {
+      "google/gemini-3.8-flash-tts": "Charon",
+      "microsoft/mai-voice-2.1": "it-IT-Luca:MAI-Voice-2.1",
+      "elevenlabs/eleven-v4": "george",
+      "elevenlabs/eleven-v4-turbo": "george"
+    },
+    "_voices_why": "Default voice per model. Gemini voices (Charon, Kore, Puck, Aoede, Fenrir, Leda, Orus, Zephyr…) speak Italian natively. MAI-Voice-2.1 has true it-IT voices (Luca, Rosa) but slow, pausy delivery. ElevenLabs premade voices are English speakers reading Italian.",
+    "eleven": "elevenlabs/eleven-v4",
+    "_eleven_why": "Most expressive, understands audio tags like [excited] [whispers] [pause]; English premade voices have a slight accent in Italian. --tier eleven",
+    "budget": "speechify/simba-3.5",
+    "_budget_why": "Cheap fallback at $6.6 / 1M chars. --tier budget",
+    "native": "microsoft/mai-voice-2.1",
+    "_native_why": "it-IT native voices (Luca, Rosa), studio quality but slower pacing. --tier native",
+    "default_voice": "george"
+  },
+  "image": {
+    "model": "microsoft/mai-image-2.7",
+    "_why": "Small images (cards, lenses, inserts shown below ~800 px): ~$0.035/img, up to 5 reference images for style consistency.",
+    "hero": "openai/gpt-image-2.6-sunburst",
+    "_hero_why": "Best detail and prompt following at quality=max, ~$0.13-0.21/img, up to 16 references. ~860 px wide: use as a card, not for deep zooms.",
+    "world": "google/gemini-nano-banana-2.1",
+    "_world_why": "4K output (3072x5504 at 9:16, ~$0.12): big enough to be the camera's world and stay sharp up to ~2.8x zoom on a 1080 screen. Clean editorial illustration. --world",
+    "world_rich": "bytedance-seed/seedream-4.5",
+    "_world_rich_why": "4K output (2304x4096, $0.04): denser, more painterly detail. --model bytedance-seed/seedream-4.5 --res 4K",
+    "fast": "microsoft/mai-image-2.7-flash",
+    "resolution": {
+      "google/gemini-nano-banana-2.1": "4K",
+      "bytedance-seed/seedream-4.5": "4K"
+    },
+    "params": {
+      "openai/gpt-image-2.6-sunburst": {"quality": "max"},
+      "openai/gpt-image-2.6-flare": {"quality": "max"}
+    },
+    "maxRefs": {
+      "microsoft/mai-image-2.7": 5,
+      "microsoft/mai-image-2.7-flash": 5,
+      "openai/gpt-image-2.6-sunburst": 16,
+      "google/gemini-nano-banana-2.1": 8,
+      "bytedance-seed/seedream-4.5": 8
+    }
+  },
+  "stt": {
+    "model": "nvidia/nemotron-3.5-transcribe",
+    "_why": "Tested 2026-11-17: the only OpenRouter STT that returned word-level timestamps (WER 3.4%, ~$0.00007/scene). voxtral-small (2.1% WER) rejects word timestamps; grok-stt / voxtral-mini returned empty bodies.",
+    "fallback": "x-ai/grok-stt-2.0"
+  },
+  "lesson": {
+    "_why": "rs lesson: DeepSeek V4.1 Flash writes the scene plan (cheap, 1M context, JSON); Piper speaks locally.",
+    "planner": "deepseek/deepseek-v4.1-flash-1017",
+    "voice": "it_IT-paola-medium",
+    "lengthScale": 0.95
+  }
+}

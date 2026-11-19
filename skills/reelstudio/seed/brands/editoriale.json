@@ -1,0 +1,9 @@
+{
+  "name": "Editoriale",
+  "handle": "@tuohandle",
+  "language": "it",
+  "look": "editoriale",
+  "tone": "Curioso e preciso. Una domanda sorprendente, poi la risposta misurata con dati veri. Frasi brevi, tono calmo, niente clickbait. Ogni numero ha una fonte.",
+  "voice": {"voice": "JBFqnCBsd6RMkjVDRZzb", "instructions": "Calmo, chiaro, curioso; ritmo da divulgazione, ritmo scorrevole."},
+  "sayVoice": "Alice"
+}

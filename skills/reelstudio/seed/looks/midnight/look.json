@@ -1,0 +1,12 @@
+{
+  "name": "Midnight",
+  "description": "Deep navy gradient, bold white type, electric yellow accent. Punchy and high-contrast.",
+  "colors": {"bg1": "#0B1020", "bg2": "#1B2350", "accent": "#FFD23F", "text": "#FFFFFF", "muted": "#A9B1D6", "card": "rgba(255,255,255,.1)"},
+  "font": {"family": "Inter", "weights": [500, 700, 800, 900]},
+  "captions": "stroke",
+  "background": "gradient",
+  "imageStyle": "Cinematic editorial illustration or photo, deep navy shadows, warm yellow key light, minimal composition, high contrast, no text or letters.",
+  "references": [],
+  "motion": "snappy",
+  "bible": "Energetic, fast cuts, bold numbers. Full-bleed images (ImageBG) are welcome for the hook. Captions uppercase."
+}

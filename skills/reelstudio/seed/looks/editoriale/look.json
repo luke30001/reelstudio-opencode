@@ -1,0 +1,13 @@
+{
+  "name": "Editoriale",
+  "description": "Clean editorial explainer: pale sky and cream, ink-navy serif headlines, one red accent pill, white cards with soft shadows. A virtual camera glides and zooms over one big world.",
+  "colors": {"bg1": "#EAF2F7", "bg2": "#F4EEE3", "accent": "#D93A3A", "text": "#16202E", "muted": "#6A7584", "card": "#FFFFFF"},
+  "font": {"family": "Inter", "weights": [500, 600, 700, 800]},
+  "display": {"family": "Newsreader", "weights": [500, 600, 700], "fallback": "Georgia, serif"},
+  "captions": "pill",
+  "background": "editorial",
+  "imageStyle": "Clean flat editorial illustration seen from above or in soft three-quarter view, pale sky blue and warm cream palette with ink-navy details and a single red accent, gentle soft shadows, crisp shapes, lots of empty space around the subject, no text, no letters, no logos.",
+  "references": [],
+  "motion": "camera",
+  "bible": "THE ZOOM FORMAT. One big world per reel (worldSize [3240, 5760] or larger) built from vector pieces: WorldGround, shapes, SvgIcon icons, cards, charts, and at most 2-3 WorldImage cards. Every scene is a camera shot: the camera travels and zooms (1x overview -> 2-3.5x detail) and never cuts. Scene 1 opens on an overview with the Headline (kicker = brand name, 2-line serif question, red pill with the twist); later scenes keep the same Headline with enter={false} or drop it when the camera dives in. Information is anchored to the world with Pin, Ring, Measure, Spotlight; numbers go in StatCard, Badge or ChartCard. One idea per shot, max 7 words on screen besides the headline. No emoji, no mascot, no ImageBG, no word-by-word pops: motion is the camera plus smooth reveals. Cite the source of any number with Source. Palette is fixed: ink, red accent, white cards."
+}

@@ -1,0 +1,14 @@
+{
+  "name": "Scriba",
+  "description": "Warm cream paper, ink-black type, one burnt-orange accent. Calm, clever, hand-drawn. The Egyptian scribe cat explains things.",
+  "colors": {"bg1": "#FBF4EA", "bg2": "#F5EADA", "accent": "#C1602E", "text": "#221A14", "muted": "#746A60", "card": "#FFFFFF"},
+  "font": {"family": "Jost", "weights": [400, 500, 600, 700, 800], "fallback": "-apple-system, \"Helvetica Neue\", sans-serif"},
+  "captions": "pill",
+  "background": "paper",
+  "mascot": "mascot.png",
+  "mascotDescription": "a sleek Egyptian cat scribe in profile, thick black single-weight ink outline, Eye of Horus marking around the eye, patterned collar with spiral motifs, holding a burnt-orange pen, no fill colour except the orange pen",
+  "imageStyle": "Minimal hand-drawn editorial illustration: thick uniform black ink outlines (like a bold felt-tip line drawing), flat warm cream paper background (#FBF4EA), almost no shading, a single burnt-orange accent colour (#C1602E) used sparingly, subtle ancient-Egyptian scribe motifs (papyrus, hieroglyph-like ornaments) where it fits, generous empty space, centred subject, no gradients, no photorealism, no text or letters.",
+  "references": ["mascot.png"],
+  "motion": "calm",
+  "bible": "Voice: a wise, slightly witty study companion, never shouty. Short sentences. One idea per scene.\nLayout: lots of cream space, ink text, orange only for the 1-2 words that matter (*word*). Prefer Title, BigStat, Bullets, Quote over full-bleed photos; images are line illustrations shown with Card or as a centred illustration, not ImageBG.\nMascot: the cat appears in the hook (pos='peek' or 'center') and the CTA, and at most once in the middle. Use <Mascot /> with the base image or a pose generated with --mascot.\nNever: neon colours, dark backgrounds, stock-photo looks, all-caps shouting captions, emoji overload (max one Icon per reel)."
+}

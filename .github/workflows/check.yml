@@ -1,0 +1,25 @@
+name: check
+on:
+  push:
+  pull_request:
+jobs:
+  check:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Shell syntax
+        run: sh -n install.sh && sh -n uninstall.sh && sh -n bin/reelstudio
+      - name: Engine syntax
+        run: node --check skills/reelstudio/engine/bin/rs.mjs && node --check skills/reelstudio/engine/bin/lesson.mjs && node --check skills/reelstudio/app/server.mjs
+      - name: Skill frontmatter
+        run: |
+          head -1 skills/reelstudio/SKILL.md | grep -qx -- '---'
+          grep -q '^name: ' skills/reelstudio/SKILL.md
+          grep -q '^description: ' skills/reelstudio/SKILL.md
+      - name: Installer paths are placeholders
+        run: |
+          grep -q '@SKILL_DIR@' agents/reelstudio-producer.md
+          grep -q '@SKILL_DIR@' bin/reelstudio
